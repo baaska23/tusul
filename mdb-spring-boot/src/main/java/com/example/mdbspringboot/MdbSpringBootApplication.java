@@ -70,10 +70,7 @@ public class MdbSpringBootApplication implements CommandLineRunner{
 		System.out.println("\n-------------------THANK YOU---------------------------");
 						
 	}
-	
-	// CRUD operations
 
-	//CREATE
 	void createGroceryItems() {
 		System.out.println("Data creation started...");
 
