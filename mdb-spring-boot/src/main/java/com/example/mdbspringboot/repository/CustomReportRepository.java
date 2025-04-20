@@ -1,6 +1,6 @@
 package com.example.mdbspringboot.repository;
 
-public interface CustomItemRepository {
+public interface CustomReportRepository {
 	
 	void updateItemQuantity(String itemName, float newQuantity);
 

@@ -5,15 +5,15 @@ import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-import com.example.mdbspringboot.model.GroceryItem;
+import com.example.mdbspringboot.model.Report;
 
-public interface ItemRepository extends MongoRepository<GroceryItem, String> {
+public interface ReportRepository extends MongoRepository<Report, String> {
 	
 	@Query("{name:'?0'}")
-	GroceryItem findItemByName(String name);
+    Report findItemByName(String name);
 	
 	@Query(value="{category:'?0'}", fields="{'name' : 1, 'quantity' : 1}")
-	List<GroceryItem> findAll(String category);
+	List<Report> findAll(String category);
 	
 	public long count();
 

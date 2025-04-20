@@ -10,21 +10,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import com.example.mdbspringboot.model.GroceryItem;
-import com.example.mdbspringboot.repository.CustomItemRepository;
-import com.example.mdbspringboot.repository.ItemRepository;
+import com.example.mdbspringboot.model.Report;
+import com.example.mdbspringboot.repository.CustomReportRepository;
+import com.example.mdbspringboot.repository.ReportRepository;
 
 @SpringBootApplication
 @EnableMongoRepositories
 public class MdbSpringBootApplication implements CommandLineRunner{
 	
 	@Autowired
-	ItemRepository groceryItemRepo;
+	ReportRepository groceryItemRepo;
 	
 	@Autowired
-	CustomItemRepository customRepo;
+	CustomReportRepository customRepo;
 	
-	List<GroceryItem> itemList = new ArrayList<GroceryItem>();
+	List<Report> itemList = new ArrayList<Report>();
 
 	public static void main(String[] args) {
 		SpringApplication.run(MdbSpringBootApplication.class, args);
@@ -74,11 +74,11 @@ public class MdbSpringBootApplication implements CommandLineRunner{
 	void createGroceryItems() {
 		System.out.println("Data creation started...");
 
-		groceryItemRepo.save(new GroceryItem("Whole Wheat Biscuit", "Whole Wheat Biscuit", 5, "snacks"));
-		groceryItemRepo.save(new GroceryItem("Kodo Millet", "XYZ Kodo Millet healthy", 2, "millets"));
-		groceryItemRepo.save(new GroceryItem("Dried Red Chilli", "Dried Whole Red Chilli", 2, "spices"));
-		groceryItemRepo.save(new GroceryItem("Pearl Millet", "Healthy Pearl Millet", 1, "millets"));
-		groceryItemRepo.save(new GroceryItem("Cheese Crackers", "Bonny Cheese Crackers Plain", 6, "snacks"));
+		groceryItemRepo.save(new Report("Whole Wheat Biscuit", "Whole Wheat Biscuit", 5, "snacks"));
+		groceryItemRepo.save(new Report("Kodo Millet", "XYZ Kodo Millet healthy", 2, "millets"));
+		groceryItemRepo.save(new Report("Dried Red Chilli", "Dried Whole Red Chilli", 2, "spices"));
+		groceryItemRepo.save(new Report("Pearl Millet", "Healthy Pearl Millet", 1, "millets"));
+		groceryItemRepo.save(new Report("Cheese Crackers", "Bonny Cheese Crackers Plain", 6, "snacks"));
 		
 		System.out.println("Data creation complete...");
 	}
@@ -95,14 +95,14 @@ public class MdbSpringBootApplication implements CommandLineRunner{
 	 // 2. Get item by name
 	 public void getGroceryItemByName(String name) {
 		 System.out.println("Getting item by name: " + name);
-		 GroceryItem item = groceryItemRepo.findItemByName(name);
+		 Report item = groceryItemRepo.findItemByName(name);
 		 System.out.println(getItemDetails(item));
 	 }
 	 
 	 // 3. Get name and items of a all items of a particular category
 	 public void getItemsByCategory(String category) {
 		 System.out.println("Getting items for the category " + category);
-		 List<GroceryItem> list = groceryItemRepo.findAll(category);
+		 List<Report> list = groceryItemRepo.findAll(category);
 		 
 		 list.forEach(item -> System.out.println("Name: " + item.getName() + ", Quantity: " + item.getItemQuantity()));
 	 }
@@ -120,7 +120,7 @@ public class MdbSpringBootApplication implements CommandLineRunner{
 		 String newCategory = "munchies";
 		 
 		 // Find all the items with the category 
-		 List<GroceryItem> list = groceryItemRepo.findAll(category);
+		 List<Report> list = groceryItemRepo.findAll(category);
 		 
 		 list.forEach(item -> {
 			 // Update the category in each document
@@ -128,7 +128,7 @@ public class MdbSpringBootApplication implements CommandLineRunner{
 		 });
 		 
 		 // Save all the items in database
-		 List<GroceryItem> itemsUpdated = groceryItemRepo.saveAll(list);
+		 List<Report> itemsUpdated = groceryItemRepo.saveAll(list);
 		 
 		 if(itemsUpdated != null)
 			 System.out.println("Successfully updated " + itemsUpdated.size() + " items.");		 
@@ -148,7 +148,7 @@ public class MdbSpringBootApplication implements CommandLineRunner{
 	 }
 	 // Print details in readable form
 	 
-	 public String getItemDetails(GroceryItem item) {
+	 public String getItemDetails(Report item) {
 
 		 System.out.println(
 		 "Item Name: " + item.getName() + 
