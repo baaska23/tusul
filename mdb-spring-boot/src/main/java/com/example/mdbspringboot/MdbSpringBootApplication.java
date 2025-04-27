@@ -1,162 +1,85 @@
 package com.example.mdbspringboot;
 
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.mdbspringboot.model.Injection;
+import com.example.mdbspringboot.model.TreatmentEntry;
+import com.example.mdbspringboot.repository.TreatmentRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import com.example.mdbspringboot.model.Report;
-import com.example.mdbspringboot.repository.CustomReportRepository;
-import com.example.mdbspringboot.repository.ReportRepository;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableMongoRepositories
-public class MdbSpringBootApplication implements CommandLineRunner{
-	
+public class MdbSpringBootApplication implements CommandLineRunner {
+
 	@Autowired
-	ReportRepository groceryItemRepo;
-	
-	@Autowired
-	CustomReportRepository customRepo;
-	
-	List<Report> itemList = new ArrayList<Report>();
+	TreatmentRepository treatmentRepo;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MdbSpringBootApplication.class, args);
 	}
-	
+
 	public void run(String... args) {
-		
-		// Clean up any previous data
-		groceryItemRepo.deleteAll(); // Doesn't delete the collection
-		
-		System.out.println("-------------CREATE GROCERY ITEMS-------------------------------\n");
-		
-		createGroceryItems();
-		
-		System.out.println("\n----------------SHOW ALL GROCERY ITEMS---------------------------\n");
-		
-		showAllGroceryItems();
-		
-		System.out.println("\n--------------GET ITEM BY NAME-----------------------------------\n");
-		
-		getGroceryItemByName("Whole Wheat Biscuit");
-		
-		System.out.println("\n-----------GET ITEMS BY CATEGORY---------------------------------\n");
-		
-		getItemsByCategory("millets");
-		
-		System.out.println("\n-----------UPDATE CATEGORY NAME OF ALL GROCERY ITEMS----------------\n");
-		
-		updateCategoryName("snacks");
-		
-		System.out.println("\n-----------UPDATE QUANTITY OF A GROCERY ITEM------------------------\n");
-		
-		updateItemQuantity("Bonny Cheese Crackers Plain", 10);
-		
-		System.out.println("\n----------DELETE A GROCERY ITEM----------------------------------\n");
-		
-		deleteGroceryItem("Kodo Millet");
-		
-		System.out.println("\n------------FINAL COUNT OF GROCERY ITEMS-------------------------\n");
-		
-		findCountOfGroceryItems();
-		
-		System.out.println("\n-------------------THANK YOU---------------------------");
-						
+		treatmentRepo.deleteAll();
+		createStructuredData();
+		showAll();
 	}
 
-	void createGroceryItems() {
-		System.out.println("Data creation started...");
+	void createStructuredData() {
+		System.out.println("Creating structured treatment entry...");
 
-		groceryItemRepo.save(new Report("Whole Wheat Biscuit", "Whole Wheat Biscuit", 5, "snacks"));
-		groceryItemRepo.save(new Report("Kodo Millet", "XYZ Kodo Millet healthy", 2, "millets"));
-		groceryItemRepo.save(new Report("Dried Red Chilli", "Dried Whole Red Chilli", 2, "spices"));
-		groceryItemRepo.save(new Report("Pearl Millet", "Healthy Pearl Millet", 1, "millets"));
-		groceryItemRepo.save(new Report("Cheese Crackers", "Bonny Cheese Crackers Plain", 6, "snacks"));
-		
-		System.out.println("Data creation complete...");
+		Injection injection = new Injection();
+		injection.setDrop(9);
+		injection.setBlood_vessel(3);
+		injection.setMuscle(2);
+		injection.setInside_skin(0);
+		injection.setUnder_skin(0);
+
+		TreatmentEntry entry = new TreatmentEntry();
+		entry.setDate(LocalDate.of(2025, 2, 3));
+		entry.setInjection(injection);
+		entry.setUHF_machine(5);
+		entry.setMassage_chair(1);
+		entry.setRed_light(3);
+		entry.setUltrasound(5);
+		entry.setLaser(0);
+		entry.setBiotens(6);
+		entry.setLymphatic_drainage_massage(0);
+		entry.setElectrophoresis(1);
+		entry.setMicro_cupping(0);
+		entry.setOxygen(0);
+		entry.setSurgical_bandage(0);
+
+		treatmentRepo.save(entry);
 	}
-	
-	// READ
-	// 1. Show all the data
-	 public void showAllGroceryItems() {
-		 
-		 itemList = groceryItemRepo.findAll();
-		 
-		 itemList.forEach(item -> System.out.println(getItemDetails(item)));
-	 }
-	 
-	 // 2. Get item by name
-	 public void getGroceryItemByName(String name) {
-		 System.out.println("Getting item by name: " + name);
-		 Report item = groceryItemRepo.findItemByName(name);
-		 System.out.println(getItemDetails(item));
-	 }
-	 
-	 // 3. Get name and items of a all items of a particular category
-	 public void getItemsByCategory(String category) {
-		 System.out.println("Getting items for the category " + category);
-		 List<Report> list = groceryItemRepo.findAll(category);
-		 
-		 list.forEach(item -> System.out.println("Name: " + item.getName() + ", Quantity: " + item.getItemQuantity()));
-	 }
-	 
-	 // 4. Get count of documents in the collection
-	 public void findCountOfGroceryItems() {
-		 long count = groceryItemRepo.count();
-		 System.out.println("Number of documents in the collection = " + count);
-	 }
-	 
-	 // UPDATE APPROACH 1: Using MongoRepository
-	 public void updateCategoryName(String category) {
-		 
-		 // Change to this new value
-		 String newCategory = "munchies";
-		 
-		 // Find all the items with the category 
-		 List<Report> list = groceryItemRepo.findAll(category);
-		 
-		 list.forEach(item -> {
-			 // Update the category in each document
-			 item.setCategory(newCategory);
-		 });
-		 
-		 // Save all the items in database
-		 List<Report> itemsUpdated = groceryItemRepo.saveAll(list);
-		 
-		 if(itemsUpdated != null)
-			 System.out.println("Successfully updated " + itemsUpdated.size() + " items.");		 
-	 }
-	 
-	 
-	 // UPDATE APPROACH 2: Using MongoTemplate
-	 public void updateItemQuantity(String name, float newQuantity) {
-		 System.out.println("Updating quantity for " + name);
-		 customRepo.updateItemQuantity(name, newQuantity);
-	 }
-	 
-	 // DELETE
-	 public void deleteGroceryItem(String id) {
-		 groceryItemRepo.deleteById(id);
-		 System.out.println("Item with id " + id + " deleted...");
-	 }
-	 // Print details in readable form
-	 
-	 public String getItemDetails(Report item) {
 
-		 System.out.println(
-		 "Item Name: " + item.getName() + 
-		 ", \nItem Quantity: " + item.getItemQuantity() + 
-		 ", \nItem Category: " + item.getCategory()
-		 );
-		 
-		 return "";
-	 }
+	void showAll() {
+		List<TreatmentEntry> list = treatmentRepo.findAll();
+		for (TreatmentEntry entry : list) {
+			System.out.println("Date: " + entry.getDate());
+			System.out.println("Injection - drop: " + entry.getInjection().getDrop());
+			System.out.println("UHF Machine: " + entry.getUHF_machine());
+			System.out.println("Massage Chair: " + entry.getMassage_chair());
+			System.out.println("Red Light: " + entry.getRed_light());
+			// Add more if needed
+		}
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+			}
+		};
+	}
 }
-
