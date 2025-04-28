@@ -8,7 +8,6 @@ public class Injection {
     private int inside_skin;
     private int under_skin;
 
-    // Getters and setters
     public int getDrop() {
         return drop;
     }

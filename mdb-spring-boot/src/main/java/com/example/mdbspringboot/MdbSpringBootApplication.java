@@ -1,7 +1,6 @@
 package com.example.mdbspringboot;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.example.mdbspringboot.model.Injection;
@@ -74,8 +73,8 @@ public class MdbSpringBootApplication implements CommandLineRunner {
 		}
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
+    @Bean
+    WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
